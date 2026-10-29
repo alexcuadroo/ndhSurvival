@@ -1,0 +1,201 @@
+# ==========================================================
+#                ndhSurvival - Configuración
+# ==========================================================
+
+# Progresión: no comienza hasta /ndh progresion iniciar.
+# Cada día equivale a 24 horas de servidor encendido, incluso vacío.
+# Bonificaciones expresadas como fracciones (0.10 = +10 %), probabilidad total de bebés.
+# Comida y saturación del pan en puntos, no en iconos de la barra.
+progresion:
+  enabled: false
+  dias:
+    '1': {}
+    '2': {pan-comida: 3, pan-saturacion: 3}
+    '3': {zombi-bebe: 0.15}
+    '4': {zombi-salud: 0.10}
+    '5': {esqueleto-proyectil: 0.10}
+    '6': {arana-velocidad: 0.10}
+    '7': {pan-comida: 2, pan-saturacion: 2}
+    '8': {zombi-bebe: 0.20}
+    '9': {zombi-dano: 0.10}
+    '10': {esqueleto-salud: 0.10}
+    '11': {agotamiento: 0.10}
+    '12': {arana-salud: 0.15}
+    '13': {zombi-salud: 0.20}
+    '14': {esqueleto-proyectil: 0.15}
+    '15': {zombi-bebe: 0.25}
+    '16': {arana-velocidad: 0.15}
+    '17': {zombi-dano: 0.15}
+    '18': {agotamiento: 0.15}
+    '19': {esqueleto-salud: 0.20}
+    '20': {zombi-velocidad: 0.05}
+    '21': {arana-dano: 0.10}
+    '22': {esqueleto-proyectil: 0.20}
+    '23': {zombi-bebe: 0.30}
+    '24': {zombi-salud: 0.30}
+    '25': {agotamiento: 0.20}
+    '26': {arana-salud: 0.25}
+    '27': {zombi-dano: 0.20}
+    '28': {esqueleto-salud: 0.25}
+    '29': {zombi-velocidad: 0.10}
+    '30': {zombi-bebe: 0.35, esqueleto-proyectil: 0.25}
+# Comando unificado: /ndh <subcomando>
+# Ejemplos (autocompletado limpio en una única palabra en español):
+#   /ndh creeper <activar|desactivar|estado>
+#   /ndh inventario <jugador|uuid>
+#   /ndh enderchest <jugador|uuid>
+#   /ndh barrendero <limpiar|activar|desactivar|estado|recargar>
+#   /ndh telegram <activar|desactivar|estado|recargar>
+#   /ndh estadisticas <activar|desactivar|estado|recargar>
+#   /ndh rtp <activar|desactivar|estado|recargar|tp|limpiarcooldown>
+#   /ndh progresion <estado|calendario|iniciar|pausar|continuar|dia|reiniciar|recargar>
+#   /ndh estado
+#   /ndh recargar [todos|<modulo>]
+#   /ndh ayuda
+#
+# Comando público para usuarios:
+#   /rtp (alias: /randomtp, /wild)
+# ==========================================================
+
+# ----------------------------------------------------------
+# 1. Módulo CreeperAsk
+# Pide permiso en un menú antes de que un creeper explote cerca de un jugador.
+# ----------------------------------------------------------
+creeperask:
+  enabled: false
+
+# ----------------------------------------------------------
+# 2. Módulo ShareStats
+# Comparte la salud, el hambre, la experiencia y los efectos activos de todos los jugadores.
+# ----------------------------------------------------------
+sharestats:
+  enabled: false
+  sync:
+    health: true
+    food: true
+    experience: true
+    potion-effects: true
+
+# ----------------------------------------------------------
+# 3. Módulo Barrendero
+# Limpieza periódica de items en el suelo con avisos en el chat.
+# ----------------------------------------------------------
+barrendero:
+  enabled: false
+  # Intervalo en segundos para ejecutar la limpieza
+  interval-seconds: 60
+  # Eliminar items con esta edad mínima (en segundos)
+  age-seconds: 15
+  # Radio (no usado por defecto) — reservado para futuras mejoras
+  radius: 0.0
+  # Lista de mundos a procesar. Vacío = todos los mundos
+  worlds: []
+  # Configuración de mensajes en el chat
+  messages:
+    enabled: true
+    warn-before-seconds: 30
+    prefix: '[SERVER]'
+    cleanup-message: '<green>{prefix} <white>Eliminados <yellow>{removed} <white>items del suelo.'
+    warning-message: '<gold>{prefix} <yellow>En <red>{seconds} <yellow>segundos se realizará una limpieza del suelo.'
+
+# ----------------------------------------------------------
+# 4. Módulo JoinTelegram (jointg)
+# Saluda a los jugadores y envía notificaciones a Telegram.
+# ----------------------------------------------------------
+jointg:
+  enabled: false
+  # Set false to disable Telegram messages without removing bot-token/chat-id.
+  telegram-enabled: false
+  bot-token: ""
+  chat-id: ""
+
+  # Messages configuration (Supports %player% placeholder)
+  join-message: "Player %player% joined"
+  quit-message: "Player %player% left"
+  # Supports %player%, %reason%, %world%, %x%, %y%, %z%
+  death-message: "Player %player% died: %reason% at %world% (%x%, %y%, %z%)"
+  start-message: "Server started!"
+
+  # Chat join message (MiniMessage format). Set to empty to disable.
+  # Placeholders: <player>, <prefix>
+  chat-join-message: ""
+
+  # Title configuration using MiniMessage format (Supports <player> placeholder)
+  join-title: "<gradient:#7f6bdb:#f79459:red>Welcome <player>!</gradient>"
+  join-subtitle: "<gray>Enjoy your stay!"
+
+  # Title timing configuration (in ticks, 20 ticks = 1 second)
+  title-fade-in: 20
+  title-stay: 50
+  title-fade-out: 20
+
+# Inspección de inventarios y Ender Chest.
+invsee:
+  enabled: false
+
+# ----------------------------------------------------------
+# 5. Módulo Random Teleport (RTP)
+# Comando público /rtp para jugadores y /ndh rtp para administradores.
+# ----------------------------------------------------------
+rtp:
+  enabled: true
+
+  # Rango de distancia (en bloques) respecto al centro o spawn del mundo
+  min-radius: 250
+  max-radius: 2500
+
+  # Si es true, toma el spawn del mundo como centro. Si es false, usa center-x y center-z.
+  use-spawn-center: true
+  center-x: 0.0
+  center-z: 0.0
+
+  # Límite máximo de intentos asíncronos para encontrar un bloque seguro
+  max-attempts: 10
+
+  # Tiempo de espera entre usos de /rtp (en segundos)
+  cooldown-seconds: 60
+
+  # Tiempo que el jugador debe permanecer quieto antes de teletransportarse (en segundos)
+  warmup-seconds: 3
+  cancel-on-move: true
+  cancel-on-damage: true
+
+  # Segundos de protección contra daño por caída al aterrizar (Efecto Resistance)
+  fall-protection-seconds: 6
+
+  # Evitar aterrizar encima de hojas de árboles o en biomas oceánicos/ríos
+  avoid-leaves: true
+  avoid-ocean-biomes: true
+
+  # Lista de mundos donde está permitido usar /rtp
+  allowed-worlds:
+    - "world"
+
+  # Bloques adicionales prohibidos como suelo de aterrizaje
+  unsafe-blocks:
+    - "MAGMA_BLOCK"
+    - "CACTUS"
+    - "CAMPFIRE"
+    - "SOUL_CAMPFIRE"
+    - "SWEET_BERRY_BUSH"
+    - "POWDER_SNOW"
+
+  # Efectos sensoriales (sonidos y partículas)
+  effects:
+    sounds: true
+    particles: true
+
+  # Mensajes personalizables en formato MiniMessage
+  messages:
+    prefix: "<gold>[RTP]</gold>"
+    disabled: "{prefix} <red>El teletransporte aleatorio está desactivado temporalmente.</red>"
+    world-disabled: "{prefix} <red>No puedes usar /rtp en este mundo.</red>"
+    already-searching: "{prefix} <yellow>Ya tienes un teletransporte aleatorio en curso.</yellow>"
+    cooldown: "{prefix} <red>Debes esperar <yellow>{seconds} segundos</yellow> más para usar /rtp.</red>"
+    searching: "{prefix} <gray>Buscando un lugar seguro...</gray>"
+    warmup-start: "{prefix} <yellow>Lugar seguro encontrado. No te muevas ni recibas daño durante <gold>{seconds}s</gold>...</yellow>"
+    warmup-tick: "<gold>Teletransportando en <yellow>{seconds}s</yellow>...</gold>"
+    cancelled-move: "{prefix} <red>Teletransporte cancelado porque te moviste.</red>"
+    cancelled-damage: "{prefix} <red>Teletransporte cancelado porque recibiste daño.</red>"
+    teleport-success: "{prefix} <green>¡Has sido teletransportado a un lugar seguro! <gray>({x}, {y}, {z})</gray></green>"
+    search-failed: "{prefix} <red>No se pudo encontrar un lugar seguro tras {attempts} intentos. Inténtalo de nuevo en unos momentos.</red>"

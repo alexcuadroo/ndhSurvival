@@ -1,0 +1,104 @@
+name: ndhSurvival
+version: '${project.version}'
+main: dev.ndh.survival.NdhSurvivalPlugin
+api-version: '${paper.api-version}'
+description: Plugin survival modular unificado bajo el comando /ndh (CreeperAsk, InvSee, JoinTelegram, Barrendero, ShareStats, RTP y más).
+authors:
+  - alexcuadroo
+softdepend:
+  - LuckPerms
+  - PlaceholderAPI
+
+commands:
+  ndh:
+    description: Comando principal de ndhSurvival con subcomandos y autocompletado.
+    usage: /ndh <ayuda|barrendero|creeper|enderchest|estadisticas|estado|inventario|progresion|recargar|rtp|telegram>
+    aliases:
+      - ndhsurvival
+  rtp:
+    description: Teletransporte aleatorio a una ubicación segura del mundo.
+    usage: /rtp
+    aliases:
+      - randomtp
+      - wild
+    permission: rtp.use
+
+permissions:
+  ndh.admin:
+    description: Acceso total a todos los subcomandos y funciones administrativas de ndhSurvival.
+    default: op
+    children:
+      creeperask.admin: true
+      invsee.use: true
+      invsee.edit: true
+      invsee.offline: true
+      invsee.enderchest: true
+      invsee.enderchest.edit: true
+      invsee.exempt.bypass: true
+      jointg.reload: true
+      barrendero.reload: true
+      sharestats.admin: true
+      rtp.admin: true
+      ndh.progresion.admin: true
+      ndh.progresion.ver: true
+      rtp.use: true
+      rtp.bypass.cooldown: true
+      rtp.bypass.warmup: true
+
+  creeperask.admin:
+    description: Permite activar o desactivar CreeperAsk (/ndh creeperask).
+    default: op
+
+  ndh.progresion.ver:
+    description: Permite consultar el estado y calendario de progresión.
+    default: true
+  ndh.progresion.admin:
+    description: Permite iniciar, pausar, ajustar y recargar la temporada.
+    default: op
+
+  invsee.use:
+    description: Permite ver inventarios de jugadores (/ndh openinv).
+    default: op
+  invsee.edit:
+    description: Permite modificar inventarios de jugadores en /ndh openinv.
+    default: op
+  invsee.offline:
+    description: Permite ver y modificar inventarios de jugadores desconectados.
+    default: op
+  invsee.enderchest:
+    description: Permite ver el Ender Chest de jugadores (/ndh endersee).
+    default: op
+  invsee.enderchest.edit:
+    description: Permite modificar el Ender Chest de jugadores en /ndh endersee.
+    default: op
+  invsee.exempt:
+    description: Protege al jugador de que otros vean o editen su inventario.
+    default: false
+  invsee.exempt.bypass:
+    description: Permite ignorar la protección invsee.exempt.
+    default: op
+
+  jointg.reload:
+    description: Permite administrar y recargar el módulo JoinTelegram (/ndh jointg).
+    default: op
+
+  barrendero.reload:
+    description: Permite administrar, ejecutar o recargar Barrendero (/ndh barrendero).
+    default: op
+
+  sharestats.admin:
+    description: Permite activar o desactivar ShareStats (/ndh sharestats).
+    default: op
+
+  rtp.use:
+    description: Permite a los jugadores normales usar el comando público /rtp.
+    default: true
+  rtp.admin:
+    description: Permite administrar el módulo RTP (/ndh rtp <on|off|status|reload|tp|clearcooldown>).
+    default: op
+  rtp.bypass.cooldown:
+    description: Permite usar /rtp sin tiempo de espera (cooldown).
+    default: op
+  rtp.bypass.warmup:
+    description: Permite teletransportarse con /rtp al instante sin esperar quieto (warmup).
+    default: op
