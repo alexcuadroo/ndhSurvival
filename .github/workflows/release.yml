@@ -1,0 +1,70 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build plugin with Maven
+        run: mvn -B clean package
+
+      - name: Extract version and tag metadata
+        id: meta
+        shell: bash
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG_NAME="${GITHUB_REF#refs/tags/}"
+          else
+            TAG_NAME="v${VERSION}"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload JAR artifact to workflow run
+        uses: actions/upload-artifact@v4
+        with:
+          name: ndhSurvival-${{ steps.meta.outputs.version }}
+          path: target/ndhSurvival-${{ steps.meta.outputs.version }}.jar
+          if-no-files-found: error
+
+      - name: Create or update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: "ndhSurvival ${{ steps.meta.outputs.tag }}"
+          body: |
+            ### ndhSurvival ${{ steps.meta.outputs.tag }}
+            Plugin survival modular para Paper/Purpur.
+
+            - **Versión:** `${{ steps.meta.outputs.version }}`
+            - **Java:** 25
+            - **Commit:** `${{ github.sha }}`
+          files: target/ndhSurvival-${{ steps.meta.outputs.version }}.jar
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
