@@ -67,4 +67,37 @@ public final class ModuleManager {
     public Collection<SurvivalModule> getModules() {
         return Collections.unmodifiableCollection(modules.values());
     }
+
+    /**
+     * Aplica el interruptor de un módulo mediante su recarga en caliente.
+     * @param id identificador registrado del módulo
+     * @param enabled estado solicitado
+     * @throws IllegalArgumentException si el módulo no existe
+     * @throws IllegalStateException si no puede aplicar el cambio
+     */
+    public void setEnabled(String id, boolean enabled) {
+        SurvivalModule module = getModule(id).orElseThrow(() -> new IllegalArgumentException("Módulo desconocido: " + id));
+        String path = module.getId() + ".enabled";
+        Object previous = plugin.getConfig().get(path);
+        Object previousTelegram = plugin.getConfig().get("jointg.telegram-enabled");
+        plugin.getConfig().set(path, enabled);
+        if (module.getId().equals("jointg")) plugin.getConfig().set("jointg.telegram-enabled", enabled);
+        try {
+            module.onReload();
+            if (module.isEnabled() != enabled) {
+                throw new IllegalStateException("El módulo no alcanzó el estado solicitado; consulta la consola.");
+            }
+        } catch (RuntimeException exception) {
+            plugin.getConfig().set(path, previous);
+            if (module.getId().equals("jointg")) plugin.getConfig().set("jointg.telegram-enabled", previousTelegram);
+            try {
+                module.onReload();
+            } catch (RuntimeException rollback) {
+                exception.addSuppressed(rollback);
+            }
+            plugin.getLogger().log(Level.SEVERE, "No se pudo cambiar el estado de " + id, exception);
+            throw new IllegalStateException("No se pudo cambiar " + id + ": " + exception.getMessage(), exception);
+        }
+        plugin.saveConfig();
+    }
 }

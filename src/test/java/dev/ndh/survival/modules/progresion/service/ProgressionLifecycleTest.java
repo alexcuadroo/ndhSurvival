@@ -38,6 +38,31 @@ class ProgressionLifecycleTest {
         return world;
     }
 
+    @Test void activationPersistsAndCanBeDisabledEvenWithInvalidRules() {
+        var plugin = plugin();
+        var yaml = ProgressionRulesTest.defaults();
+        when(plugin.getConfig()).thenReturn(yaml);
+        var module = new ProgresionModule(plugin);
+        try (var bukkit = mockStatic(Bukkit.class)) {
+            bukkit.when(Bukkit::getWorlds).thenReturn(List.of());
+            bukkit.when(Bukkit::getScheduler).thenReturn(mock(BukkitScheduler.class));
+            module.onReload();
+            assertNull(module.service());
+            module.setEnabled(true);
+            assertTrue(module.isEnabled());
+            assertFalse(module.service().clock().started());
+            assertTrue(yaml.getBoolean("progresion.enabled"));
+            verify(plugin).saveConfig();
+            yaml.set("progresion.dias.3.zombi-bebe", 2);
+            module.setEnabled(false);
+            assertNull(module.service());
+            assertFalse(yaml.getBoolean("progresion.enabled"));
+            assertThrows(IllegalStateException.class, () -> module.setEnabled(true));
+            assertFalse(yaml.getBoolean("progresion.enabled"));
+            verify(plugin, times(2)).saveConfig();
+        }
+    }
+
     @Test void worldsAreSavedBeforeModificationAndRestoredOnlyIfStillHard() throws Exception {
         var plugin = plugin();
         var rules = ProgressionRules.load(ProgressionRulesTest.defaults().getConfigurationSection("progresion.dias"));

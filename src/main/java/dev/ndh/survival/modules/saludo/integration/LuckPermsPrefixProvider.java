@@ -1,4 +1,4 @@
-package dev.ndh.survival.modules.jointg.integration;
+package dev.ndh.survival.modules.saludo.integration;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

@@ -128,6 +128,7 @@ public final class NdhCommandRouter implements CommandExecutor, TabCompleter {
         registerSubCommand(new AyudaSubCommand(this));
         registerSubCommand(new EstadoSubCommand(plugin));
         registerSubCommand(new RecargarSubCommand(plugin));
+        registerSubCommand(new dev.ndh.survival.core.command.impl.ModulosSubCommand(plugin));
     }
 
     public void sendHelp(CommandSender sender) {

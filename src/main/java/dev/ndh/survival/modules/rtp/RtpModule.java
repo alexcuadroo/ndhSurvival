@@ -46,6 +46,7 @@ public final class RtpModule implements SurvivalModule {
 
     private final Map<UUID, Long> cooldowns = new HashMap<>();
     private final Set<UUID> searchingPlayers = new HashSet<>();
+    private long sessionGeneration;
     private final Map<UUID, WarmupSession> activeWarmups = new HashMap<>();
 
     public RtpModule(NdhSurvivalPlugin plugin) {
@@ -131,6 +132,7 @@ public final class RtpModule implements SurvivalModule {
     }
 
     private void cancelAllSessions() {
+        sessionGeneration++;
         searchingPlayers.clear();
         for (WarmupSession session : new ArrayList<>(activeWarmups.values())) {
             session.cancelTask();
@@ -191,8 +193,9 @@ public final class RtpModule implements SurvivalModule {
                     0.1);
         }
 
+        long generation = sessionGeneration;
         locationFinder.findSafeLocation(world, safeDestination -> {
-            searchingPlayers.remove(uuid);
+            if (generation != sessionGeneration || !searchingPlayers.remove(uuid)) return;
             if (!player.isOnline()) {
                 return;
             }

@@ -12,7 +12,7 @@ softdepend:
 commands:
   ndh:
     description: Comando principal de ndhSurvival con subcomandos y autocompletado.
-    usage: /ndh <ayuda|barrendero|creeper|enderchest|estadisticas|estado|inventario|progresion|recargar|rtp|telegram>
+    usage: /ndh <ayuda|barrendero|creeper|enderchest|estadisticas|estado|inventario|modulos|progresion|recargar|rtp|saludo|telegram>
     aliases:
       - ndhsurvival
   rtp:
@@ -36,6 +36,7 @@ permissions:
       invsee.enderchest.edit: true
       invsee.exempt.bypass: true
       jointg.reload: true
+      ndh.saludo.admin: true
       barrendero.reload: true
       sharestats.admin: true
       rtp.admin: true
@@ -78,8 +79,12 @@ permissions:
     description: Permite ignorar la protección invsee.exempt.
     default: op
 
+  ndh.saludo.admin:
+    description: Permite administrar títulos y mensajes de bienvenida (/ndh saludo).
+    default: op
+
   jointg.reload:
-    description: Permite administrar y recargar el módulo JoinTelegram (/ndh jointg).
+    description: Permite administrar y recargar el módulo Telegram (/ndh telegram).
     default: op
 
   barrendero.reload:

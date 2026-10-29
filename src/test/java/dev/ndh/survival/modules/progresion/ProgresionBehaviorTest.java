@@ -116,7 +116,22 @@ class ProgresionBehaviorTest {
         assertEquals(List.of("estado", "calendario"), command.tabComplete(sender, "progresion", new String[] {""}));
         command.execute(sender, "progresion", new String[] {"dia", "30"});
         verify(service, never()).change(anyString(), anyInt());
+        command.execute(sender, "progresion", new String[] {"activar"});
+        command.execute(sender, "progresion", new String[] {"desactivar"});
+        verify(module, never()).setEnabled(anyBoolean());
         assertTrue(command.tabComplete(sender, "progresion", new String[] {"reiniciar", ""}).isEmpty());
+    }
+
+    @Test void adminCanActivateWithoutAnExistingService() {
+        when(module.service()).thenReturn(null);
+        CommandSender sender = mock(CommandSender.class);
+        when(sender.hasPermission("ndh.progresion.admin")).thenReturn(true);
+        var command = new ProgresionSubCommand(module, plugin);
+        command.execute(sender, "progresion", new String[] {"activar"});
+        verify(module).setEnabled(true);
+        command.execute(sender, "progresion", new String[] {"desactivar"});
+        verify(module).setEnabled(false);
+        assertEquals(List.of("activar"), command.tabComplete(sender, "progresion", new String[] {"act"}));
     }
 
     @Test void restartRequiresConfirmationAndDayMustBeInRange() {

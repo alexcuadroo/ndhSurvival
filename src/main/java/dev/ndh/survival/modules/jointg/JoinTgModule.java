@@ -3,22 +3,20 @@ package dev.ndh.survival.modules.jointg;
 import dev.ndh.survival.NdhSurvivalPlugin;
 import dev.ndh.survival.core.module.SurvivalModule;
 import dev.ndh.survival.modules.jointg.command.TelegramSubCommand;
-import dev.ndh.survival.modules.jointg.integration.PrefixProvider;
-import dev.ndh.survival.modules.jointg.listener.PluginListener;
+import dev.ndh.survival.modules.jointg.listener.TelegramListener;
 import dev.ndh.survival.modules.jointg.telegram.TelegramNotifier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.HandlerList;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Módulo JoinTelegram: saluda a los jugadores con títulos/mensajes y notifica a Telegram al entrar, salir o morir.
+ * Gestiona exclusivamente las notificaciones a Telegram.
  */
 public final class JoinTgModule implements SurvivalModule {
 
     private final NdhSurvivalPlugin plugin;
     private @Nullable TelegramNotifier notifier;
-    private @Nullable PluginListener listenerInstance;
-    private @Nullable PrefixProvider prefixProvider;
+    private @Nullable TelegramListener listenerInstance;
 
     public JoinTgModule(NdhSurvivalPlugin plugin) {
         this.plugin = plugin;
@@ -44,16 +42,11 @@ public final class JoinTgModule implements SurvivalModule {
 
     @Override
     public String getDescription() {
-        return "Saluda a los jugadores y envía notificaciones a Telegram (join, quit, death, start).";
+        return "Envía notificaciones a Telegram (entrada, salida, muerte e inicio).";
     }
 
     @Override
     public void onEnable() {
-        prefixProvider = PrefixProvider.createIfAvailable(plugin);
-        if (prefixProvider == null) {
-            plugin.getComponentLogger().info("LuckPerms not found or not enabled; join prefixes will be empty.");
-        }
-
         reloadModuleConfig(true);
         plugin.getCommandRouter().registerSubCommand(new TelegramSubCommand(this));
     }
@@ -77,7 +70,8 @@ public final class JoinTgModule implements SurvivalModule {
 
     @Override
     public boolean isEnabled() {
-        return listenerInstance != null;
+        TelegramNotifier current = notifier;
+        return current != null && current.isEnabled();
     }
 
     private void reloadModuleConfig(boolean announceStart) {
@@ -129,24 +123,7 @@ public final class JoinTgModule implements SurvivalModule {
         }
         this.notifier = notifier;
 
-        String chatJoinMessage = sec.getString("chat-join-message", "");
-        String joinTitle = sec.getString("join-title", "<gradient:#7f6bdb:#f79459:red>Welcome <player>!</gradient>");
-        String joinSubtitle = sec.getString("join-subtitle", "<gray>Enjoy your stay!");
-        int fadeIn = sec.getInt("title-fade-in", 20);
-        int stay = sec.getInt("title-stay", 50);
-        int fadeOut = sec.getInt("title-fade-out", 20);
-
-        PluginListener listener = new PluginListener(
-                plugin,
-                notifier,
-                prefixProvider,
-                joinTitle,
-                joinSubtitle,
-                fadeIn,
-                stay,
-                fadeOut,
-                chatJoinMessage
-        );
+        TelegramListener listener = new TelegramListener(plugin, notifier);
         this.listenerInstance = listener;
 
         plugin.getServer().getPluginManager().registerEvents(listener, plugin);

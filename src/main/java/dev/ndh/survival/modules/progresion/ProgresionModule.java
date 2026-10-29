@@ -18,6 +18,21 @@ public final class ProgresionModule implements SurvivalModule {
     public ProgresionModule(NdhSurvivalPlugin plugin) { this.plugin = plugin; }
     /** Devuelve el servicio, ausente si el módulo está desactivado o bloqueado. */
     public @Nullable ProgressionService service() { return service; }
+    /**
+     * Cambia la activación y guarda la configuración una vez validada.
+     * @param enabled si se debe habilitar el módulo
+     */
+    public void setEnabled(boolean enabled) {
+        Object previous = plugin.getConfig().get("progresion.enabled");
+        plugin.getConfig().set("progresion.enabled", enabled);
+        try {
+            onReload();
+        } catch (IllegalStateException exception) {
+            plugin.getConfig().set("progresion.enabled", previous);
+            throw exception;
+        }
+        plugin.saveConfig();
+    }
     /** {@inheritDoc} */
     @Override public String getId() { return "progresion"; }
     /** {@inheritDoc} */
@@ -36,10 +51,10 @@ public final class ProgresionModule implements SurvivalModule {
             if (!plugin.getConfig().isBoolean("progresion.enabled")) {
                 throw new IllegalArgumentException("progresion.enabled debe ser booleano");
             }
+            if (!plugin.getConfig().getBoolean("progresion.enabled")) { onDisable(); return; }
             var section = plugin.getConfig().getConfigurationSection("progresion.dias");
             if (section == null) throw new IllegalArgumentException("Falta progresion.dias");
             ProgressionRules rules = ProgressionRules.load(section);
-            if (!plugin.getConfig().getBoolean("progresion.enabled")) { onDisable(); return; }
             ProgressionService current = service;
             if (current != null && current.operational()) { current.rules(rules); return; }
             ProgressionService replacement = new ProgressionService(plugin, rules);

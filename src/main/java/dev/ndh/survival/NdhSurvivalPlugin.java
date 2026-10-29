@@ -46,6 +46,7 @@ public final class NdhSurvivalPlugin extends JavaPlugin {
         moduleManager.registerModule(new CreeperAskModule(this));
         moduleManager.registerModule(new InvSeeModule(this));
         moduleManager.registerModule(new JoinTgModule(this));
+        moduleManager.registerModule(new dev.ndh.survival.modules.saludo.SaludoModule(this));
         moduleManager.registerModule(new BarrenderoModule(this));
         moduleManager.registerModule(new ShareStatsModule(this));
         moduleManager.registerModule(new RtpModule(this));

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Subcomando para administrar las notificaciones y bienvenida de Telegram (/ndh telegram).
+ * Subcomando para administrar las notificaciones de Telegram (/ndh telegram).
  */
 public final class TelegramSubCommand implements NdhSubCommand {
 
@@ -53,7 +53,7 @@ public final class TelegramSubCommand implements NdhSubCommand {
             TelegramNotifier notifier = module.getNotifier();
             boolean tgActive = notifier != null && notifier.isEnabled();
             sender.sendMessage(MINI_MESSAGE.deserialize(
-                    "<yellow>[JoinTelegram] Bienvenida: <green>ACTIVA</green> | Notificaciones Telegram: "
+                    "<yellow>[Telegram] Notificaciones: "
                             + (tgActive ? "<green>ACTIVAS</green>" : "<red>DESACTIVADAS</red>")));
             return;
         }
@@ -62,18 +62,19 @@ public final class TelegramSubCommand implements NdhSubCommand {
         if (sub.equals("recargar") || sub.equals("reload")) {
             module.getPlugin().reloadConfig();
             module.onReload();
-            sender.sendMessage(MINI_MESSAGE.deserialize("<green>[JoinTelegram] Configuración recargada correctamente.</green>"));
+            sender.sendMessage(MINI_MESSAGE.deserialize("<green>[Telegram] Configuración recargada correctamente.</green>"));
             return;
         }
 
         if (sub.equals("activar") || sub.equals("on") || sub.equals("desactivar") || sub.equals("off")) {
             boolean enableTg = sub.equals("activar") || sub.equals("on");
+            module.getPlugin().getConfig().set("jointg.enabled", enableTg);
             module.getPlugin().getConfig().set("jointg.telegram-enabled", enableTg);
             module.getPlugin().saveConfig();
             module.onReload();
             sender.sendMessage(MINI_MESSAGE.deserialize(
-                    "<yellow>[JoinTelegram] Notificaciones de Telegram "
-                            + (enableTg ? "<green>activadas</green>." : "<red>desactivadas</red>.")));
+                    "<yellow>[Telegram] Notificaciones de Telegram "
+                            + (module.isEnabled() ? "<green>activadas</green>." : "<red>desactivadas</red> (revisa la configuración).")));
             return;
         }
 

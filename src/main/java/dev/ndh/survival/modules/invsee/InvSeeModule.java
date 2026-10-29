@@ -159,6 +159,7 @@ public final class InvSeeModule implements SurvivalModule {
         boolean openEnder = args.length >= 2 && (args[1].equalsIgnoreCase("ender") || args[1].equalsIgnoreCase("ec"));
 
         resolveOfflinePlayer(viewer, targetArg, target -> {
+            if (this.sessionManager != sessionManager) return;
             if (target == null) {
                 viewer.sendMessage(Component.text("No se encontró al jugador '" + targetArg + "'.", NamedTextColor.RED));
                 return;
@@ -209,6 +210,7 @@ public final class InvSeeModule implements SurvivalModule {
 
         String targetArg = args[0];
         resolveOfflinePlayer(viewer, targetArg, target -> {
+            if (this.sessionManager != sessionManager) return;
             if (target == null) {
                 viewer.sendMessage(Component.text("No se encontró al jugador '" + targetArg + "'.", NamedTextColor.RED));
                 return;

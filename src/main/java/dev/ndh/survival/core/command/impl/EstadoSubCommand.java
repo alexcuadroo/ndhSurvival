@@ -28,7 +28,7 @@ public final class EstadoSubCommand implements NdhSubCommand {
 
     @Override
     public List<String> getAliases() {
-        return List.of("status", "modulos", "info");
+        return List.of("status", "info");
     }
 
     @Override

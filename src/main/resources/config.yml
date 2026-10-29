@@ -2,7 +2,7 @@
 #                ndhSurvival - Configuración
 # ==========================================================
 
-# Progresión: no comienza hasta /ndh progresion iniciar.
+# Progresión: habilitar con /ndh progresion activar y comenzar con /ndh progresion iniciar.
 # Cada día equivale a 24 horas de servidor encendido, incluso vacío.
 # Bonificaciones expresadas como fracciones (0.10 = +10 %), probabilidad total de bebés.
 # Comida y saturación del pan en puntos, no en iconos de la barra.
@@ -46,10 +46,12 @@ progresion:
 #   /ndh enderchest <jugador|uuid>
 #   /ndh barrendero <limpiar|activar|desactivar|estado|recargar>
 #   /ndh telegram <activar|desactivar|estado|recargar>
+#   /ndh saludo <activar|desactivar|estado|recargar>
 #   /ndh estadisticas <activar|desactivar|estado|recargar>
 #   /ndh rtp <activar|desactivar|estado|recargar|tp|limpiarcooldown>
-#   /ndh progresion <estado|calendario|iniciar|pausar|continuar|dia|reiniciar|recargar>
+#   /ndh progresion <estado|calendario|activar|desactivar|iniciar|pausar|continuar|dia|reiniciar|recargar>
 #   /ndh estado
+#   /ndh modulos <creeper|inventarios|saludo|telegram|barrendero|estadisticas|rtp|progresion> <activar|desactivar|estado>
 #   /ndh recargar [todos|<modulo>]
 #   /ndh ayuda
 #
@@ -100,7 +102,7 @@ barrendero:
 
 # ----------------------------------------------------------
 # 4. Módulo JoinTelegram (jointg)
-# Saluda a los jugadores y envía notificaciones a Telegram.
+# Envía notificaciones a Telegram; la bienvenida se configura en saludo.
 # ----------------------------------------------------------
 jointg:
   enabled: false
@@ -116,6 +118,9 @@ jointg:
   death-message: "Player %player% died: %reason% at %world% (%x%, %y%, %z%)"
   start-message: "Server started!"
 
+# Bienvenida en Minecraft, independiente de Telegram.
+saludo:
+  enabled: false
   # Chat join message (MiniMessage format). Set to empty to disable.
   # Placeholders: <player>, <prefix>
   chat-join-message: ""

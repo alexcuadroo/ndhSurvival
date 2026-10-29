@@ -16,7 +16,7 @@ public final class ProgresionSubCommand implements NdhSubCommand {
     private final NdhSurvivalPlugin plugin;
     private static final List<String> PUBLIC = List.of("estado", "calendario");
     private static final List<String> ADMIN = List.of("estado", "calendario", "iniciar", "pausar", "continuar",
-            "dia", "reiniciar", "recargar");
+            "dia", "reiniciar", "recargar", "activar", "desactivar");
 
     /** Crea el comando para el módulo indicado. */
     public ProgresionSubCommand(ProgresionModule module, NdhSurvivalPlugin plugin) {
@@ -28,7 +28,7 @@ public final class ProgresionSubCommand implements NdhSubCommand {
     /** {@inheritDoc} */
     @Override public String getDescription() { return "Consulta o administra la dificultad progresiva."; }
     /** {@inheritDoc} */
-    @Override public String getUsage() { return "/ndh progresion <estado|calendario [dia]|iniciar|pausar|continuar|dia <1-30>|reiniciar confirmar|recargar>"; }
+    @Override public String getUsage() { return "/ndh progresion <estado|calendario [dia]|activar|desactivar|iniciar|pausar|continuar|dia <1-30>|reiniciar confirmar|recargar>"; }
     /** {@inheritDoc} */
     @Override public String getPermission() { return "ndh.progresion.ver"; }
     /** Permite administrar aunque se haya revocado el permiso público. */
@@ -42,14 +42,26 @@ public final class ProgresionSubCommand implements NdhSubCommand {
         String action = args.length == 0 ? "estado" : args[0].toLowerCase(Locale.ROOT);
         if (!PUBLIC.contains(action) && !admin(sender)) { tell(sender, "No tienes permiso administrativo."); return; }
         try {
+            if ((action.equals("activar") || action.equals("desactivar")) && args.length == 1) {
+                boolean enabled = action.equals("activar");
+                module.setEnabled(enabled);
+                tell(sender, enabled ? "Módulo activado. Consulta /ndh progresion estado; para una nueva temporada usa /ndh progresion iniciar."
+                        : "Módulo desactivado. Temporada conservada.");
+                return;
+            }
             if (action.equals("recargar") && args.length == 1) {
                 plugin.reloadConfig();
                 module.onReload();
-                tell(sender, "Configuración recargada.");
+                tell(sender, "Configuración recargada." + (module.isEnabled() ? "" : " Módulo inactivo; consulta /ndh progresion estado."));
                 return;
             }
             var service = module.service();
-            if (service == null || !service.operational()) { tell(sender, "Módulo desactivado o bloqueado; consulta la consola."); return; }
+            if (service == null || !service.operational()) {
+                tell(sender, !plugin.getConfig().getBoolean("progresion.enabled")
+                        ? "Módulo desactivado en configuración (progresion.enabled=false). Un administrador puede usar /ndh progresion activar."
+                        : "Módulo bloqueado por un error de carga o guardado. Usa /ndh progresion recargar para reintentar y consulta la consola.");
+                return;
+            }
             var clock = service.clock();
             if (action.equals("estado") && args.length <= 1) {
                 if (!clock.started()) { tell(sender, "Temporada sin iniciar."); return; }

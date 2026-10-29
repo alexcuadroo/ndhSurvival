@@ -1,4 +1,4 @@
-package dev.ndh.survival.modules.jointg.integration;
+package dev.ndh.survival.modules.saludo.integration;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
